@@ -1,6 +1,10 @@
 \documentclass{article}
-\usepackage[letterpaper, textwidth=5.2in, textheight=9.0in]{geometry}
-\frenchspacing
+
+% page layout
+\usepackage[letterpaper, textwidth=125mm, textheight=250mm]{geometry}
+\usepackage{setspace}
+\setstretch{1.08}
+\sloppy\sloppypar\raggedbottom\frenchspacing
 
 \newcommand{\problemname}{Problem}
 \newcounter{problem}
@@ -8,9 +12,9 @@
 \newcommand{\probref}[1]{\problemname~\ref{#1}}
 
 \begin{document}
-\section*{EPRV observing strategy problem set}
+\section*{Observing strategy problem set}
 \noindent
-\textit{This document is written by \textbf{Hogg}, with input from \textbf{Rubenzahl}.}
+\textit{by} \textbf{David W. Hogg}, \textit{with input from \textbf{Niamh O'Sullivan} \& \textbf{Ryan Rubenzahl}.}
 
 \paragraph{Introduction:}
 The current observing plan (or cadence or strategy) for \textsl{Terra Hunting}
@@ -51,7 +55,7 @@ y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t)
 where the angular frequency $\omega$ is related to the period $P$ by $\omega = 2\pi/P$,
 and the amplitude $\kappa$ is related to the linear amplitudes $a,b$ by $\kappa^2=a^2+b^2$.
 
-``What about eccentricity,'' you ask?
+``What about eccentricity'' you ask?
 Ignore it; if you can't measure the sinusoid, you definitely can't measure the eccentric Kepler curve.
 Recall that we are obtaining a lower bound on any possible uncertainty.
 
@@ -63,7 +67,7 @@ In unrealistic case A the times are periodic at the sidereal period for $n=3650$
 In unrealistic case B the $n=3650$ times are randomly chosen in a 10-year interval.
 Plot the (optimistic, minimal, best-case) uncertainty on $\kappa$ as a function of period $T$.
 You will have to choose some uncertainty or uncertainty distribution for your measurements; choose to match your best-case expectations for \textsl{Terra Hunting}.
-If you want extra credit, add in some red noise (that is, nontrivial correlations), as you might expect from supergranulation.
+More sophisticated noise models will be developed below.
 
 \problem{Once per night}\label{prob:k}
 Imagine that there are a fixed number of available hours available over the next 3650 nights, and imagine (incorrectly) that there is magically guaranteed availability for a particular magical target every single night.
@@ -94,7 +98,7 @@ This problem is extremely simplified but it will show (we think) that all four p
 It will also show (we think) that short-period signals are less detectable in program C than in programs A, B, and D,
 but that otherwise programs A, B, and D will all be identical for the detection of all planets.
 
-\problem{Visibility and weather in the decade}
+\problem{Visibility and weather in the decade}\label{prob:visibility}
 Re-do \probref{prob:k} but having censored the four observing programs by visibility and weather expectations.
 That is:
 \begin{itemize}
@@ -105,9 +109,11 @@ Generate some random (and, if you are good, realistically correlated) bad weathe
 \end{itemize}
 Censor the four observing programs A, B, C, D you made in \probref{prob:k} such that they observe for fewer nights, but such that they are now actually realistic programs.
 Check that all four programs still deliver approximately the same amount of total observation time.
-How do your answers to \probref{prob:k} change in this more realistic case? Are there periods that become harder to detect?
+How do your answers to \probref{prob:k} change in this more realistic case?
+Obviously everything gets worse (in an information sense) as the total exposure time goes down;
+more importantly, are there periods that become harder to detect?
 
-\problem{Confirm Chaplin \textsl{et al.} result}
+\problem{Confirm Chaplin \textsl{et al.}}\label{prob:chaplin}
 The Chaplin \textsl{et al.} paper shows plots of the RV uncertainty in a single exposure of time $T$,
 given two sources of noise.
 The first source is white noise, which is an unbeatable limit on our precision.
@@ -116,16 +122,18 @@ The paper starts with a power specrum for the noise and ends up with RV uncertai
 Write code to do what Chaplin did, and reproduce their key figures.
 Note that the Chaplin estimates are (extremely optimistic) Fisher information estimates, just like the ones we made in \probref{prob:info}.
 
-When you execute this problem, you might be doing integrals over frequency of power spectra.
+When you execute this problem, you might be doing integrals over frequency of power spectra (and then taking square roots).
 If you execute the problem this way, make sure you do those integrals sensibly.
 One important issue: Should your integral include a point at \emph{zero frequency}?
 That's a nasty thing: It corresponds to a random DC offset across the full data set.
 Does that exist?
+Our advice is to do any integrals you can analytically, analytically.
+The white-noise component of the variance has straightforward analytic results.
 
 Once that all works, and you can reproduce the Chaplin \textsl{et al.} results, figure out how to do a slightly different calculation:
 Use the same Chaplin assumptions as you used in the first part of this problem, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T)$ with exposure time $T_2$.
 
-\problem{Negatively correlated noise}
+\problem{Negatively correlated noise}\label{prob:negative}
 The noise from p-mode oscillations is very different from white noise or red noise (like that from granulation, super-granulation, and spot rotation; see \probref{prob:gran}), because the p-mode oscillations create short-term \emph{negative} correlations in the noise or in the joint uncertainties of adjacent or near-in-time observations.
 When you have a \emph{negative} noise correlation between two adjacent exposures, you can do \emph{better} than $\sqrt{2}$ when you combine them, just as, when you have a \emph{positive} correlation between two adjacent exposures, you do \emph{worse} than $\sqrt{2}$ when you combine them (because they share aspects of the noise).
 
@@ -133,19 +141,56 @@ HOGG: First part: Show that the inverse variance we care about is the sum of the
 
 HOGG: Second part: Test a bunch of strategies, with realistic read and slew times.
 
+Note, in all of this, the inverses of variance tensors appear repeatedly.
+It might sound counter-intuitive, but you should never use your linear-algebra package's \texttt{inv()} function, for reasons of numerical stability.
+Always use \texttt{solve()} and never \texttt{inv()}.
+If you have trouble figuring out how to get rid of your \texttt{inv()} calls, get in touch with Hogg for advice.
+
 \problem{Weather within the visit}
-foo and bar.
+Now imagine that the transparency varies \emph{within} an exposure.
+In \probref{prob:chaplin} you (probably) did some integrals of the power spectrum times sinc functions.
+These sinc functions appear because the sinc is the fourier transform of the tophat.
+If the transparency varies, the exposure function or window function for the observation is no longer a top hat,
+but instead has some non-trivial structure in time.
+Add non-trivial structure, by (say) modulating the transparency during each observation with a random polynomial (make sure it is always bounded in $[0,1]$) or a thresholded or sigmoided polynomial or something like that.
+Show that the Chaplin \textsl{et al.} result is very sensitive to this variation in transparency.
+After all, the special exposure times they find depend on zeroing out p-modes.
+Transparency variations will break that ``resonance.''
 
-\problem{Granulation and super-granulation}
-foo and bar.
+Show that the information obtained in the multi-exposure visits computed in \probref{prob:negative} is much less sensitive to such variations.
+To perform this analysis, you will have to assume that we \emph{know} how the transparency varied during the exposure.
+Make this assumption, and, when we are in operations, we will find out whether or not that is substantially valid.
+For extra credit, show that multi-exposure visits generally have sensitivity (in an inverse variance sense) that varies linearly with the total average transparency during the exposures.
 
-\problem{Forest of planets}
-foo and bar.
+\problem{Granulation and super-granulation}\label{prob:gran}
+The most important issue for Earth hunting is almost certainly the correlated noise from granulation, super-granulation, and rotating surface features like spots.
+These noise sources introduce \emph{positive} correlations over hours to days, and positive correlations are ruinous:
+When two observations are positively correlated, there is no way to combine them such that you get a measurement
+that is $\sqrt{2}$ better than each individual measurement.
+Thus you don't get twice as much information when you spend twice as much time.
+
+Model a reasonable granulation and super-granulation noise source with NIAMH WHAT KERNEL FUNCTION OR POWER SPECTRUM? WHAT AMPLITUDE?
+Now repeat all of the calculations of \probref{prob:visibility} but including this term in the covariance matrix.
+That is ignore (for now) p-modes, but include realistic white noise (individual-exposure unbeatable uncertainty) plus the granulation and super-granulation noise contributions.
+Do the visibility-and-weather-censored observing plans still fare similarly, or do plans C and D take the lead for any values of $k$?
+
+Note that this calculation might be technically hard, because you will have to evaluate a Gaussian Process on thousands of data points.
+If this is prohibitive, and you don't want to learn anything about executing GPs, you can do the following hack:
+Each observing season (from when the star first becomes visible in (say) the Spring to when the star is last visible in (say) the Fall) can be treated individually, and the information from each season (the Fisher information or the inverse variance) can be coadded over seasons.
+Each individual season should be a tractable GP evaluation even with brain-dead code.
 
 \problem{Maximizing information about the noise}
 foo and bar.
 
-\problem{What if we can mitigate granulation?}\label{prob:gran}
+\problem{Forest of planets}
+HOGG WRITE THIS...
+
+Note that there are many ways to structure your code here, but in many of them, you will find that you need to ``take the inverse'' of the same covariance matrix over and over again.
+You might be tempted to use \texttt{inv()} and then repeatedly re-use that inverse tensor, but see comments at the end of \probref{prob:negative}, where we said that you should always use \texttt{solve()} instead.
+If you need to do multiple \texttt{solve()} operations with the same matrix, perform a Cholesky factorization, save the factorization, and then use \texttt{cho\_solve()}.
+That's just as fast as the dumber solution, and way more numerically stable.
+
+\problem{What if we can mitigate granulation?}
 foo and bar
 
 \problem{Putting it all together}
