@@ -1,0 +1,154 @@
+\documentclass{article}
+\usepackage[letterpaper, textwidth=5.2in, textheight=9.0in]{geometry}
+\frenchspacing
+
+\newcommand{\problemname}{Problem}
+\newcounter{problem}
+\newcommand{\problem}[1]{\refstepcounter{problem}\paragraph{\problemname~{\theproblem} --- {#1}:}}
+\newcommand{\probref}[1]{\problemname~\ref{#1}}
+
+\begin{document}
+\section*{EPRV observing strategy problem set}
+\noindent
+\textit{This document is written by \textbf{Hogg}, with input from \textbf{Rubenzahl}.}
+
+\paragraph{Introduction:}
+The current observing plan (or cadence or strategy) for \textsl{Terra Hunting}
+is that we will observe each star for one exposure each night.
+There has been discussion of the exposure time, and a bit of push back on the every-star-once-every-night plan, but it remains the baseline.
+I (Hogg) am convinced that observing each star once per night cannot be the correct strategy, for several reasons:
+\begin{itemize}
+\item
+The every-star-once-every-night strategy is \emph{just made up}, not based on the optimization or quantitative comparison of possible strategies.
+\item
+The strategy fills out the final data set with many pairs of observations separated by integer multiples of the sidereal period, but very few pairs of observations that sample shorter intervals, and especially not intervals near 1/2, 3/2, 5/2, 7/2, \textsl{etc.} of sidereal.
+That, in turn, probably reduces our sensitivity to short-period planets and noise sources with correlations on sub-day timescales.
+\item
+Single-exposure visits will probably be timed to minimze p-mode contributions to the final uncertainty budget.
+It is almost always better to resolve and model nuisances than to hope that you can observe such that they don't matter.
+Besides, long exposures bin the incoming photons, and binning is sinning.
+\end{itemize}
+This problem set is designed to find (and, we hope, solve) simple, quantitative problems that are extremely adjacent to the hard, real-world observing strategy questions that we face in 2026 and over the next decade.
+
+It is Hogg's firmly held position that \emph{if} we can solve the problems in this problem set, then
+\textsl{(a)}~we will have content for more than one publishable paper, and
+\textsl{(b)}~we will have a good basis for making decisions about the \textsl{Terra Hunting} observing plan.
+
+\problem{Information about a planet in an observing program}\label{prob:info}
+There are many ways to detect or measure or characterize planets in radial-velocity data.
+That said, there are strict bounds on how well we can possibly do, coming from information theory.
+In particular, the Fisher information in a data set about the amplitude (say) of a signal with a certain period sets an absolute lower limit on the uncertainty that we can obtain by any unbiased method (see the Cram\'er--Rao bound).
+In detail, there are many ways to search for and identify and characterize signals.
+All these methods must deliver an uncertainty that is strictly not less than the uncertainty we compute by considering only the Fisher information on the amplitude of a sinusoidal signal at fixed period.
+
+That is, we could search in period, amplitude, eccentricity, and orbital orientation space, and we could simultaneously marginalize out all noise sources and all nuisances, and we cannot do \emph{better} than the uncertainty implied by the Fisher information on the amplitude of a sinusoid at fixed period.
+
+Now imagine that we have $n$ radial-velocity measurements $y_i$, taken at (exposure mid-point barycentric) times $t_i$, each of which as an uncertainty (assumed Gaussian and zero mean) $\sigma_i$.
+What is the Fisher information on the amplitude $\kappa$ of a radial-velocity signal
+\begin{equation}
+y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t)
+\end{equation}
+where the angular frequency $\omega$ is related to the period $P$ by $\omega = 2\pi/P$,
+and the amplitude $\kappa$ is related to the linear amplitudes $a,b$ by $\kappa^2=a^2+b^2$.
+
+``What about eccentricity,'' you ask?
+Ignore it; if you can't measure the sinusoid, you definitely can't measure the eccentric Kepler curve.
+Recall that we are obtaining a lower bound on any possible uncertainty.
+
+In order to solve this problem, start by assuming that all of the observations are uncorrelated; that is, assume that the covariance matrix for the list of measurements $y_i$ is diagonal.
+Then, what is the same answer for covariant measurements, and how do you parameterize that?
+
+Choose a set of times for two cases:
+In unrealistic case A the times are periodic at the sidereal period for $n=3650$ daily observations.
+In unrealistic case B the $n=3650$ times are randomly chosen in a 10-year interval.
+Plot the (optimistic, minimal, best-case) uncertainty on $\kappa$ as a function of period $T$.
+You will have to choose some uncertainty or uncertainty distribution for your measurements; choose to match your best-case expectations for \textsl{Terra Hunting}.
+If you want extra credit, add in some red noise (that is, nontrivial correlations), as you might expect from supergranulation.
+
+\problem{Once per night}\label{prob:k}
+Imagine that there are a fixed number of available hours available over the next 3650 nights, and imagine (incorrectly) that there is magically guaranteed availability for a particular magical target every single night.
+Imagine (incorrectly) that every observation $i$ we make of this target gives us a measurement of the radial velocity $y_i$ of exactly the same uncertainty $\sigma_i=\sigma_0$, and that these uncertainties are well represented by zero-mean Gaussians of variance $\sigma_i^2$.
+Most importantly, assume (incorrectly) that the observational uncertainties are all perfectly \emph{uncorrelated}:
+Every observation's noise draw is independent from every other observation's.
+That is, in this problem, we are assuming that the star has \emph{no non-trivial noise properties} and that the instrumentation is stable.
+
+Now consider three possible programs:
+\begin{itemize}
+\item
+In program A, the target is observed once per night.
+\item
+In program B, the target is observed a random number of times per night, where that number is drawn from a Poisson process with mean rate of unity.
+\item
+In program C, the target is observed $k$ times in a night, once every $k$ nights. Consider only small values of $k$, like $k\leq 6$.
+\item
+In program D, nights are chosen iid as ``observing nights'' with probability $1/k$.
+On each chosen observing night, the target is observed $k$ times; on the not-chosen nights the target is not observed.
+\end{itemize}
+By construction, all of these programs use the same amount of integration time.
+How does the sensitivity of the observing program to planetary companions at different periods depend on strategy?
+You might have to make some additional decisions about how you distribute observations within a night.
+We are happy if you simply assume that in the nights in programs B, C, and D with more than one observation, you literally do the intra-night observations one right after another (separated only by CCD read time).
+(In this case it is worth noting that programs B, C, and D all use less wall-clock time at fixed integration time than program A, since they don't involve as much telescope slew and acquisition.)
+
+This problem is extremely simplified but it will show (we think) that all four programs are equally sensitive (in a Fisher-information sense) to planets with orbital periods substantially longer than a few days.
+It will also show (we think) that short-period signals are less detectable in program C than in programs A, B, and D,
+but that otherwise programs A, B, and D will all be identical for the detection of all planets.
+
+\problem{Visibility and weather in the decade}
+Re-do \probref{prob:k} but having censored the four observing programs by visibility and weather expectations.
+That is:
+\begin{itemize}
+\item
+Choose a realistic celestial position (RA and Dec) for your target, and figure out on which nights it is visible according to some sensible airmass limits.
+\item
+Generate some random (and, if you are good, realistically correlated) bad weather, such that the target can only be observed on the non-bad nights.
+\end{itemize}
+Censor the four observing programs A, B, C, D you made in \probref{prob:k} such that they observe for fewer nights, but such that they are now actually realistic programs.
+Check that all four programs still deliver approximately the same amount of total observation time.
+How do your answers to \probref{prob:k} change in this more realistic case? Are there periods that become harder to detect?
+
+\problem{Confirm Chaplin \textsl{et al.} result}
+The Chaplin \textsl{et al.} paper shows plots of the RV uncertainty in a single exposure of time $T$,
+given two sources of noise.
+The first source is white noise, which is an unbeatable limit on our precision.
+The second is noise from surface velocities of p modes (asteroseismic modes).
+The paper starts with a power specrum for the noise and ends up with RV uncertainties.
+Write code to do what Chaplin did, and reproduce their key figures.
+Note that the Chaplin estimates are (extremely optimistic) Fisher information estimates, just like the ones we made in \probref{prob:info}.
+
+When you execute this problem, you might be doing integrals over frequency of power spectra.
+If you execute the problem this way, make sure you do those integrals sensibly.
+One important issue: Should your integral include a point at \emph{zero frequency}?
+That's a nasty thing: It corresponds to a random DC offset across the full data set.
+Does that exist?
+
+Once that all works, and you can reproduce the Chaplin \textsl{et al.} results, figure out how to do a slightly different calculation:
+Use the same Chaplin assumptions as you used in the first part of this problem, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T)$ with exposure time $T_2$.
+
+\problem{Negatively correlated noise}
+The noise from p-mode oscillations is very different from white noise or red noise (like that from granulation, super-granulation, and spot rotation; see \probref{prob:gran}), because the p-mode oscillations create short-term \emph{negative} correlations in the noise or in the joint uncertainties of adjacent or near-in-time observations.
+When you have a \emph{negative} noise correlation between two adjacent exposures, you can do \emph{better} than $\sqrt{2}$ when you combine them, just as, when you have a \emph{positive} correlation between two adjacent exposures, you do \emph{worse} than $\sqrt{2}$ when you combine them (because they share aspects of the noise).
+
+HOGG: First part: Show that the inverse variance we care about is the sum of the inverse variance tensor.
+
+HOGG: Second part: Test a bunch of strategies, with realistic read and slew times.
+
+\problem{Weather within the visit}
+foo and bar.
+
+\problem{Granulation and super-granulation}
+foo and bar.
+
+\problem{Forest of planets}
+foo and bar.
+
+\problem{Maximizing information about the noise}
+foo and bar.
+
+\problem{What if we can mitigate granulation?}\label{prob:gran}
+foo and bar
+
+\problem{Putting it all together}
+foo and bar.
+
+\end{document}
