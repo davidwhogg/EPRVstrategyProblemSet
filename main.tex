@@ -1,7 +1,7 @@
 \documentclass{article}
 
 % page layout
-\usepackage[letterpaper, textwidth=125mm, textheight=250mm]{geometry}
+\usepackage[letterpaper, textwidth=125mm, textheight=230mm]{geometry}
 \usepackage{setspace}
 \setstretch{1.08}
 \sloppy\sloppypar\raggedbottom\frenchspacing
@@ -133,15 +133,35 @@ The white-noise component of the variance has straightforward analytic results.
 Once that all works, and you can reproduce the Chaplin \textsl{et al.} results, figure out how to do a slightly different calculation:
 Use the same Chaplin assumptions as you used in the first part of this problem, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T)$ with exposure time $T_2$.
 
-\problem{Negatively correlated noise}\label{prob:negative}
+\problem{Negatively correlated noise in a multi-exposre visit}\label{prob:negative}
 The noise from p-mode oscillations is very different from white noise or red noise (like that from granulation, super-granulation, and spot rotation; see \probref{prob:gran}), because the p-mode oscillations create short-term \emph{negative} correlations in the noise or in the joint uncertainties of adjacent or near-in-time observations.
 When you have a \emph{negative} noise correlation between two adjacent exposures, you can do \emph{better} than $\sqrt{2}$ when you combine them, just as, when you have a \emph{positive} correlation between two adjacent exposures, you do \emph{worse} than $\sqrt{2}$ when you combine them (because they share aspects of the noise).
 
-HOGG: First part: Show that the inverse variance we care about is the sum of the inverse variance tensor.
+In \probref{prob:chaplin}, you figured out how to compute variances and covariances for observations and pairs of observations, given both p-mode and white noise contributions.
+Now imagine that you have $N$ observations, all of length $T$, with dead-time intervals (read times) $\Delta$ between them.
+For this observing sequence, you can construct the $N\times N$ variance tensor you expect to represent the combined p-mode and white noise in this $N$-exposure sequence, treated as one ``visit.''
 
-HOGG: Second part: Test a bunch of strategies, with realistic read and slew times.
+We want to consider the situation in which the observation is modeled as a multivariate ($N$-dimensional) Gaussian draw from a Gaussian with a mean $N$-vector and a $N\times N$ variance tensor.
+For this problem we will imagine that the star has, over the visit, a fixed mean velocity $\mu$ (which is what we are trying to measure).
+Thus the mean $N$-vector is treated as just being the mean $\mu$ repeated $N$ times.
+The variance tensor is built as just described.
 
-Note, in all of this, the inverses of variance tensors appear repeatedly.
+The first question to answer is: What is the Fisher information you obtain about the mean $\mu$ from one of these $N$-exposure visits?
+It looks like the sum of all the $N^2$ terms in the inverse of the variance matrix!
+
+The second question is: What is the (optimistic) measurement uncertainty $\sigma$, and (more importantly) Fisher information per wall-clock time, coming from different realistic scenarios?
+Consider exposure times in the range 30-1500 seconds, and $1\leq N\leq 10$.
+In computing wall-clock time, set the read-noise time to be reasonable and include a realistic slew time at the end (or beginning if you prefer).
+
+In your answer to this, you will see Chaplin \textsl{et al.} as the $N=1$ results,
+you will see that multi-exposure visits don't just do better, but do better \emph[per unit wall clock time],
+and you will see that the best exposure time at $N=1$ is the worst exposure time at $N=10$.
+Enjoy!
+
+Explain why the only metric we could possibly care about is information per wall-clock time.
+Okay fine, this is the only metric we could care about \emph{when the assumptions of this problem are actually correct} (and they aren't).
+
+Note, in all of this, the inverses of variance tensors appear.
 It might sound counter-intuitive, but you should never use your linear-algebra package's \texttt{inv()} function, for reasons of numerical stability.
 Always use \texttt{solve()} and never \texttt{inv()}.
 If you have trouble figuring out how to get rid of your \texttt{inv()} calls, get in touch with Hogg for advice.
@@ -179,10 +199,19 @@ If this is prohibitive, and you don't want to learn anything about executing GPs
 Each observing season (from when the star first becomes visible in (say) the Spring to when the star is last visible in (say) the Fall) can be treated individually, and the information from each season (the Fisher information or the inverse variance) can be coadded over seasons.
 Each individual season should be a tractable GP evaluation even with brain-dead code.
 
-\problem{Maximizing information about the noise}
-foo and bar.
+\problem{Maximizing information about the noise}\label{prob:noise}
+There are combinatoric options for observing programs.
+We can come up with more possible observing programs than there are atoms in the visible universe.
+Therefore we won't try to truly optimize over all possible observing programs.
+However, we can compare the four visibility (and weather) censored observing programs from \probref{prob:visibility} on various grounds.
+We have compared them on detectability of planets as a function of planet period, and we will (below) compare them on mitigation of the (effective) noise coming from short-period planets.
 
-\problem{Forest of planets}
+Here we ask: Which, of (the visibility and weather censored versions of) observing plans A, B, C, D is most sensitive to the properties of the ``red noise'' from granulation, super-granulation, and spots.
+HOGG FORMULATE THE QUESTION SPECIFICALLY.
+
+HOGG NOTE: We will have to consider scheduling \emph{within the night}, and not just scheduling at the night level, if we are going to get this right.
+
+\problem{Forest of planets}\label{prob:planets}
 HOGG WRITE THIS...
 
 Note that there are many ways to structure your code here, but in many of them, you will find that you need to ``take the inverse'' of the same covariance matrix over and over again.
