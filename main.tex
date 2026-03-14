@@ -6,18 +6,42 @@
 \setstretch{1.08}
 \sloppy\sloppypar\raggedbottom\frenchspacing
 
+% list management
+\usepackage{enumitem}
+\setlist{itemsep=0.0ex}
+\setlist[enumerate]{label=\textsl{(\alph*)}}
+
+% problem typesetting -- THIS IS SO INSANE
+\usepackage{amsmath, amsthm}
+\makeatletter
+\def\th@definition{%
+  \thm@notefont{}% same as heading font
+  \normalfont % body font
+}
+\makeatother
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@thm}{\thm@headpunct{.}}{\thm@headpunct{:}}{}{}
+\makeatother
+\theoremstyle{definition}
 \newcommand{\problemname}{Problem}
-\newcounter{problem}
-\newcommand{\problem}[1]{\refstepcounter{problem}\paragraph{\problemname~{\theproblem} --- {#1}:}}
+\newtheorem{problem}{\problemname}
 \newcommand{\probref}[1]{\problemname~\ref{#1}}
+\theoremstyle{remark}
+\newcommand{\notename}{Note}
+\newtheorem{note}{\notename}[problem]
+\newcommand{\noteref}[1]{\textit{\notename}~\ref{#1}}
+
+% math macros
+\newcommand{\dd}{\mathrm{d}}
 
 \begin{document}
 \section*{Observing strategy problem set}
 \noindent
-\textit{by} \textbf{David W. Hogg}, \textit{with input from \textbf{Niamh O'Sullivan} \& \textbf{Ryan Rubenzahl}.}
+\textit{by} \textbf{David W. Hogg}\footnote{The author is very grateful for input from Niamh O'Sullivan (Oxford), Ryan Rubenzahl (CCA), and Megan Bedell (CCA).}
 
 \paragraph{Introduction:}
-The current observing plan (or cadence or strategy) for \textsl{Terra Hunting}
+The current baseline observing plan (or cadence or strategy) for \textsl{Terra Hunting}
 is that we will observe each star for one exposure each night.
 There has been discussion of the exposure time, and a bit of push back on the every-star-once-every-night plan, but it remains the baseline.
 I (Hogg) am convinced that observing each star once per night cannot be the correct strategy, for several reasons:
@@ -26,19 +50,41 @@ I (Hogg) am convinced that observing each star once per night cannot be the corr
 The every-star-once-every-night strategy is \emph{just made up}, not based on the optimization or quantitative comparison of possible strategies.
 \item
 The strategy fills out the final data set with many pairs of observations separated by integer multiples of the sidereal period, but very few pairs of observations that sample shorter intervals, and especially not intervals near 1/2, 3/2, 5/2, 7/2, \textsl{etc.} of sidereal.
-That, in turn, probably reduces our sensitivity to short-period planets and noise sources with correlations on sub-day timescales.
+That, in turn, probably reduces our sensitivity to short-period planets and noise sources with correlations on hours-to-days timescales.
 \item
-Single-exposure visits will probably be timed to minimze p-mode contributions to the final uncertainty budget.
+Our baseline takes one exposure per visit, adjusted to minimize p-mode contributions to the final uncertainty budget.
 It is almost always better to resolve and model nuisances than to hope that you can observe such that they don't matter.
-Besides, long exposures bin the incoming photons, and binning is sinning.
+This is related to the question of whether to ``mitigate'' or ``avoid'' foregrounds in cosmological projects such as line-intensity mapping.
 \end{itemize}
-This problem set is designed to find (and, we hope, solve) simple, quantitative problems that are extremely adjacent to the hard, real-world observing strategy questions that we face in 2026 and over the next decade.
+This problem set is designed to find (and, we hope, solve) simple, quantitative, well-posed problems that are extremely adjacent to the hard, real-world, ill-posed observing strategy questions that we face in 2026 and over the subsequent decade.
 
 It is Hogg's firmly held position that \emph{if} we can solve the problems in this problem set, then
-\textsl{(a)}~we will have content for more than one publishable paper, and
-\textsl{(b)}~we will have a good basis for making decisions about the \textsl{Terra Hunting} observing plan.
+\begin{itemize}
+\item we will have content for more than one publishable paper in the refereed literature, and
+\item we will build a shared understanding of relevant concepts and language around them, and
+\item we will have a good basis for making decisions about the \textsl{Terra Hunting} observing plan.
+\end{itemize}
+Just to be absolutely clear: I (Hogg) \emph{do not know the answers} to the problems posed below.
+I am currently working with Rubenzahl on \probref{prob:negative}.
+But I don't think \emph{anyone} in the field of EPRV can answer all of the questions posed in this problem set, or at least not without some work.
 
-\problem{Information about a planet in an observing program}\label{prob:info}
+\begin{problem}[relevant details about \textsl{Terra Hunting}]\label{prob:gather}
+Gather the following quantities or inputs or estimates thereof:
+\begin{enumerate}
+    \item the expected read-out time for the detector;
+    \item the expected slew time from target to target, including acquisition and settle;
+    \item some kind of estimates of weather statistics for the site;
+    \item the expected RV precision for a single, say, 300\,s exposure of a 6.5\,mag Sun-like star, under the outrageously unrealistic assumption that there will be no noise other than white (photon) noise (don't worry; we are going to build sophisticated noise models below);
+    \item the longest exposure time any sensible person would let you integrate for on a 6.5\,mag Sun-like star, before insisting that you split the exposure into two sub-exposures;
+    \item the expected read noise \emph{in units of exposure time} such that, for a 6.5\,mag Sun-like star, the read noise would deliver, in that exposure time, comparable uncertainty to the white (photon) noise;
+    \item what Chaplin \textsl{et al.} assumed about the power spectrum (or kernel, equivalently) of p-mode noise;
+    \item what the Aigrain group assumes about granulation and super-granulation, expressed as a power spectrum or kernel; and
+    \item a month or so of real Solar RV measurements made by Rubenzahl with \textsl{Keck Planet Finder (KPF)}.
+\end{enumerate}
+We will need these pieces of information for the problems that follow.
+\end{problem}
+
+\begin{problem}[information about a planet in an observing program]\label{prob:info}
 There are many ways to detect or measure or characterize planets in radial-velocity data.
 That said, there are strict bounds on how well we can possibly do, coming from information theory.
 In particular, the Fisher information in a data set about the amplitude (say) of a signal with a certain period sets an absolute lower limit on the uncertainty that we can obtain by any unbiased method (see the Cram\'er--Rao bound).
@@ -50,14 +96,10 @@ That is, we could search in period, amplitude, eccentricity, and orbital orienta
 Now imagine that we have $n$ radial-velocity measurements $y_i$, taken at (exposure mid-point barycentric) times $t_i$, each of which as an uncertainty (assumed Gaussian and zero mean) $\sigma_i$.
 What is the Fisher information on the amplitude $\kappa$ of a radial-velocity signal
 \begin{equation}
-y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t)
+y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t) ~,\label{eq:sine}
 \end{equation}
 where the angular frequency $\omega$ is related to the period $P$ by $\omega = 2\pi/P$,
 and the amplitude $\kappa$ is related to the linear amplitudes $a,b$ by $\kappa^2=a^2+b^2$.
-
-``What about eccentricity'' you ask?
-Ignore it; if you can't measure the sinusoid, you definitely can't measure the eccentric Kepler curve.
-Recall that we are obtaining a lower bound on any possible uncertainty.
 
 In order to solve this problem, start by assuming that all of the observations are uncorrelated; that is, assume that the covariance matrix for the list of measurements $y_i$ is diagonal.
 Then, what is the same answer for covariant measurements, and how do you parameterize that?
@@ -68,8 +110,26 @@ In unrealistic case B the $n=3650$ times are randomly chosen in a 10-year interv
 Plot the (optimistic, minimal, best-case) uncertainty on $\kappa$ as a function of period $T$.
 You will have to choose some uncertainty or uncertainty distribution for your measurements; choose to match your best-case expectations for \textsl{Terra Hunting}.
 More sophisticated noise models will be developed below.
+\end{problem}
 
-\problem{Once per night}\label{prob:k}
+\begin{note}
+In order to simply answer this, assume that the angular frequency $\omega = 2\pi/P$ or period $P$ of the planet is fixed, and give your answer in terms of that fixed frequency.
+Later in \probref{prob:nuisances} we will look at what happens when you are inferring multiple parameters but only care about some of them.
+\end{note}
+
+\begin{note}
+Equation \eqref{eq:sine} is written in terms of linear amplitudes $a, b$ but the question is about the total amplitude $\kappa$, which is a nonlinear (quadrature sum) of these.
+In order to transform the $2\times 2$ information tensor from the $a, b$ space to the $\kappa$ space, you will have to use the derivative vector $\dd\kappa/\dd(a,b)$.
+Think about the units of the information tensor and this derivative vector to make sure your expression is good.
+\end{note}
+
+\begin{note}
+``What about eccentricity'' you ask?
+Ignore it; if you can't measure the $e=0$ sinusoidal signal \eqref{eq:sine}, then you definitely can't measure the eccentric Kepler curve with $e>0$.
+Recall that we are obtaining a lower bound on any possible uncertainty.
+\end{note}
+
+\begin{problem}[once per night]\label{prob:k}
 Imagine that there are a fixed number of available hours available over the next 3650 nights, and imagine (incorrectly) that there is magically guaranteed availability for a particular magical target every single night.
 Imagine (incorrectly) that every observation $i$ we make of this target gives us a measurement of the radial velocity $y_i$ of exactly the same uncertainty $\sigma_i=\sigma_0$, and that these uncertainties are well represented by zero-mean Gaussians of variance $\sigma_i^2$.
 Most importantly, assume (incorrectly) that the observational uncertainties are all perfectly \emph{uncorrelated}:
@@ -89,16 +149,20 @@ In program D, nights are chosen iid as ``observing nights'' with probability $1/
 On each chosen observing night, the target is observed $k$ times; on the not-chosen nights the target is not observed.
 \end{itemize}
 By construction, all of these programs use the same amount of integration time.
-How does the sensitivity of the observing program to planetary companions at different periods depend on strategy?
+How does the sensitivity of the observing program to planetary companions at different periods depend on strategy (and the value of $k$)?
 You might have to make some additional decisions about how you distribute observations within a night.
 We are happy if you simply assume that in the nights in programs B, C, and D with more than one observation, you literally do the intra-night observations one right after another (separated only by CCD read time).
-(In this case it is worth noting that programs B, C, and D all use less wall-clock time at fixed integration time than program A, since they don't involve as much telescope slew and acquisition.)
+(In this case it is worth noting that programs B, C, and D all might use less wall-clock time at fixed integration time than program A, since they don't involve as much telescope slew.)
+\end{problem}
 
+\begin{note}
 This problem is extremely simplified but it will show (we think) that all four programs are equally sensitive (in a Fisher-information sense) to planets with orbital periods substantially longer than a few days.
 It will also show (we think) that short-period signals are less detectable in program C than in programs A, B, and D,
 but that otherwise programs A, B, and D will all be identical for the detection of all planets.
+Note that this is in part because we are assuming uncorrelated noise (we'll update that assumption below).
+\end{note}
 
-\problem{Visibility and weather in the decade}\label{prob:visibility}
+\begin{problem}[visibility and weather in the decade]\label{prob:visibility}
 Re-do \probref{prob:k} but having censored the four observing programs by visibility and weather expectations.
 That is:
 \begin{itemize}
@@ -111,9 +175,10 @@ Censor the four observing programs A, B, C, D you made in \probref{prob:k} such 
 Check that all four programs still deliver approximately the same amount of total observation time.
 How do your answers to \probref{prob:k} change in this more realistic case?
 Obviously everything gets worse (in an information sense) as the total exposure time goes down;
-more importantly, are there periods that become harder to detect?
+more importantly, are there exoplanet periods that become harder to detect?
+\end{problem}
 
-\problem{Confirm Chaplin \textsl{et al.}}\label{prob:chaplin}
+\begin{problem}[confirm Chaplin \textsl{et al.}]\label{prob:chaplin}
 The Chaplin \textsl{et al.} paper shows plots of the RV uncertainty in a single exposure of time $T$,
 given two sources of noise.
 The first source is white noise, which is an unbeatable limit on our precision.
@@ -132,8 +197,9 @@ The white-noise component of the variance has straightforward analytic results.
 
 Once that all works, and you can reproduce the Chaplin \textsl{et al.} results, figure out how to do a slightly different calculation:
 Use the same Chaplin assumptions as you used in the first part of this problem, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T)$ with exposure time $T_2$.
+\end{problem}
 
-\problem{Negatively correlated noise in a multi-exposre visit}\label{prob:negative}
+\begin{problem}[negatively correlated noise in a multi-exposre visit]\label{prob:negative}
 The noise from p-mode oscillations is very different from white noise or red noise (like that from granulation, super-granulation, and spot rotation; see \probref{prob:gran}), because the p-mode oscillations create short-term \emph{negative} correlations in the noise or in the joint uncertainties of adjacent or near-in-time observations.
 When you have a \emph{negative} noise correlation between two adjacent exposures, you can do \emph{better} than $\sqrt{2}$ when you combine them, just as, when you have a \emph{positive} correlation between two adjacent exposures, you do \emph{worse} than $\sqrt{2}$ when you combine them (because they share aspects of the noise).
 
@@ -152,24 +218,49 @@ It looks like the sum of all the $N^2$ terms in the inverse of the variance matr
 The second question is: What is the (optimistic) measurement uncertainty $\sigma$, and (more importantly) Fisher information per wall-clock time, coming from different realistic scenarios?
 Consider exposure times in the range 30-1500 seconds, and $1\leq N\leq 10$.
 In computing wall-clock time, set the read-noise time to be reasonable and include a realistic slew time at the end (or beginning if you prefer).
+\end{problem}
 
-In your answer to this, you will see Chaplin \textsl{et al.} as the $N=1$ results,
-you will see that multi-exposure visits don't just do better, but do better \emph[per unit wall clock time],
-and you will see that the best exposure time at $N=1$ is the worst exposure time at $N=10$.
-Enjoy!
+\begin{note}
+You will see the Chaplin \textsl{et al.} results (and your answer to \probref{prob:chaplin}) as the results you get at $N=1$.
+You will see that, when p-mode noise dominates, that multi-exposure visits don't just do better, but do better \emph{per unit wall clock time}.
+You will see that the best exposure time at $N=1$ is the worst exposure time at $N=10$.
+\end{note}
 
-Explain why the only metric we could possibly care about is information per wall-clock time.
-Okay fine, this is the only metric we could care about \emph{when the assumptions of this problem are actually correct} (and they aren't).
-
-Note, in all of this, the inverses of variance tensors appear.
+\begin{note}\label{note:solve}
+In all of this, the inverses of variance tensors appear.
 It might sound counter-intuitive, but you should never use your linear-algebra package's \texttt{inv()} function, for reasons of numerical stability.
 Always use \texttt{solve()} and never \texttt{inv()}.
 If you have trouble figuring out how to get rid of your \texttt{inv()} calls, get in touch with Hogg for advice.
+\end{note}
 
-\problem{Weather within the visit}
+\begin{problem}
+Explain the conditions or assumptions under which a good metric is information per wall-clock time.
+What good properties does the quantity have, and what bad properties does this quantity have?
+In these terms, how is a fixed-term project like \textsl{Terra Hunting} different from an open-ended program of, say, a PI who applies for new data every semester?
+\end{problem}
+
+\begin{problem}[real data]\label{prob:real}
+Dust off the Solar data from Rubenzahl's \textsl{KPF} program you obtained in \probref{prob:gather}.
+This data set includes multiple observations of the Sun with rapid cadence.
+What parts of your solutions to \probref{prob:negative} can you confirm or rule out by inspecting (or, even better, combining) these observations?
+To be specific:
+What predictions do your answers to \probref{prob:negative} make for this data set and is the data consistent with those predictions?
+\end{problem}
+
+\begin{note}
+For the purposes of this document, ``data'' is a mass noun, like ``hair'' or ``grass.''
+\end{note}
+
+\begin{note}
+For every real-data observation, we do indeed know the velocity of the center of mass of the Sun, in all three of the spectrograph, barycentric, and heliocentric rest frames.
+Some of these frames are weird when we are thinking about barycentric-corrected velocities of our own host star.
+Do we need to get serious about reference frame for this, and for \textsl{Terra Hunting} more generally?
+\end{note}
+
+\begin{problem}[weather within the visit]\label{prob:weather}
 Now imagine that the transparency varies \emph{within} an exposure.
-In \probref{prob:chaplin} you (probably) did some integrals of the power spectrum times sinc functions.
-These sinc functions appear because the sinc is the fourier transform of the tophat.
+In \probref{prob:chaplin} you (probably) did some integrals of the power spectrum times sinc functions (or maybe not; maybe you were more clever than that).
+Sinc functions appear because the sinc is the Fourier transform of the tophat.
 If the transparency varies, the exposure function or window function for the observation is no longer a top hat,
 but instead has some non-trivial structure in time.
 Add non-trivial structure, by (say) modulating the transparency during each observation with a random polynomial (make sure it is always bounded in $[0,1]$) or a thresholded or sigmoided polynomial or something like that.
@@ -180,26 +271,29 @@ Transparency variations will break that ``resonance.''
 Show that the information obtained in the multi-exposure visits computed in \probref{prob:negative} is much less sensitive to such variations.
 To perform this analysis, you will have to assume that we \emph{know} how the transparency varied during the exposure.
 Make this assumption, and, when we are in operations, we will find out whether or not that is substantially valid.
-For extra credit, show that multi-exposure visits generally have sensitivity (in an inverse variance sense) that varies linearly with the total average transparency during the exposures.
+For extra credit, show that multi-exposure visits generally deliver information (in a Fisher or inverse variance sense) that varies linearly with the total integrated transparency (or mean transparency times exposure time) during the exposures.
+\end{problem}
 
-\problem{Granulation and super-granulation}\label{prob:gran}
+\begin{problem}[granulation and super-granulation]\label{prob:gran}
 The most important issue for Earth hunting is almost certainly the correlated noise from granulation, super-granulation, and rotating surface features like spots.
 These noise sources introduce \emph{positive} correlations over hours to days, and positive correlations are ruinous:
 When two observations are positively correlated, there is no way to combine them such that you get a measurement
 that is $\sqrt{2}$ better than each individual measurement.
 Thus you don't get twice as much information when you spend twice as much time.
 
-Model a reasonable granulation and super-granulation noise source with NIAMH WHAT KERNEL FUNCTION OR POWER SPECTRUM? WHAT AMPLITUDE?
-Now repeat all of the calculations of \probref{prob:visibility} but including this term in the covariance matrix.
+Model a reasonable granulation and super-granulation noise source with two aperiodic simple harmonic oscillator (SHO) kernels with $\sigma_G$ = 0.329 m/s, $\tau_G$ = 0.31 days, and $\sigma_{SG}$ = 0.725 m/s , $\tau_{SG}$ = 1.05 days. Now repeat all of the calculations of \probref{prob:visibility} but including this term in the covariance matrix.
 That is ignore (for now) p-modes, but include realistic white noise (individual-exposure unbeatable uncertainty) plus the granulation and super-granulation noise contributions.
 Do the visibility-and-weather-censored observing plans still fare similarly, or do plans C and D take the lead for any values of $k$?
+\end{problem}
 
-Note that this calculation might be technically hard, because you will have to evaluate a Gaussian Process on thousands of data points.
-If this is prohibitive, and you don't want to learn anything about executing GPs, you can do the following hack:
+\begin{note}
+This calculation might be technically hard, because you will have to evaluate a Gaussian Process on thousands of data points.
+If this is prohibitive, and if you don't want to learn anything about executing GPs, you can do the following hack:
 Each observing season (from when the star first becomes visible in (say) the Spring to when the star is last visible in (say) the Fall) can be treated individually, and the information from each season (the Fisher information or the inverse variance) can be coadded over seasons.
 Each individual season should be a tractable GP evaluation even with brain-dead code.
+\end{note}
 
-\problem{Maximizing information about the noise}\label{prob:noise}
+\begin{problem}[maximizing information about the noise]\label{prob:noise}
 There are combinatoric options for observing programs.
 We can come up with more possible observing programs than there are atoms in the visible universe.
 Therefore we won't try to truly optimize over all possible observing programs.
@@ -210,19 +304,61 @@ Here we ask: Which, of (the visibility and weather censored versions of) observi
 HOGG FORMULATE THE QUESTION SPECIFICALLY.
 
 HOGG NOTE: We will have to consider scheduling \emph{within the night}, and not just scheduling at the night level, if we are going to get this right.
+\end{problem}
 
-\problem{Forest of planets}\label{prob:planets}
-HOGG WRITE THIS...
+\begin{problem}[covariances of planets]\label{prob:nuisances}
+In \probref{prob:planets} we are going to think about the information-theoretic covariances between different planets.
+This is related to the statistics problem of \emph{nuisance parameters}.
+Imagine that you are fitting two (zero-eccentricity) planets that both obey \eqref{eq:sine}, but with two different periods $P_1$ and $P_2$ (or frequencies $\omega_1=2\pi/P_1$ and $\omega_2=2\pi/P_2$).
+How does your information-theoretic expected uncertainty on the amplitude $\kappa_2$ of planet $2$ depend on the fact that you are also fitting for planet $1$ at the same time?
+You will have to look up the relevant information theory.
 
-Note that there are many ways to structure your code here, but in many of them, you will find that you need to ``take the inverse'' of the same covariance matrix over and over again.
-You might be tempted to use \texttt{inv()} and then repeatedly re-use that inverse tensor, but see comments at the end of \probref{prob:negative}, where we said that you should always use \texttt{solve()} instead.
+Once you have that working, choose one of your favorite realistic observing strategies for one of your favorite realistic targets from \probref{prob:visibility} and compute the expected (information-theoretic) uncertainty on the amplitude $\kappa_2$ on planet $2$ as a function of the two periods $P_1$ and $P_2$.
+Compare your results to what you get when you fit \emph{only} planet $2$ and don't allow for planet $1$; they should always be strictly non-better.
+\end{problem}
+
+\begin{note}
+I conjecture that the effects will be largest when either $P_1$ approaches $P_2$ or else when both periods get comparable to the total time of the full observing campaign.
+\end{note}
+
+\begin{problem}[forest of planets]\label{prob:planets}
+There are two ways to think about the short-period and long-period planets---the planets outside the period range of greatest interest to \textsl{Terra Hunting}.
+The first is as \emph{interesting targets of scientific study} and the second is as \emph{annoying sources of additional noise in the data}.
+I don't think our strategy here depends much which of these attitudes one takes, but (as you can see from the above) I am in the camp of \emph{characterizing} rather than \emph{avoiding} noise.
+If we adopt the characterization attitude, there are, once again, two strategies:
+The first is to \emph{fit and subtract} the short- and long-period planets.
+The second is to \emph{simultaneously fit} all planets.
+
+My guess is that we will adopt the latter plan; that is, we will simultaneously fit all planets we have in every stellar radial-velocity history.
+One interesting point is that the fit-and-subtract and the simultaneously-fit strategies become identical when the multiple planet signals become orthogonal in the space of the data.
+What do I mean here?
+The planets are close to orthogonal in the space of the data when the design matrix $X$ for the $k$ planets at $k$ different periods produces a parameter information tensor $X^\top\,C^{-1}\,X$ (HOGG WE NEED TO DEFINE THINGS EARLIER) that is close to block-diagonal with $k$ blocks, one per planet.
+In general the planets approach orthogonality as the data set gets long, but there are issues if we do something stupid like observe with a precisely periodic cadence, which can generate resonances and aliases.
+
+HOGG: Write this problem.
+\end{problem}
+
+\begin{note}
+HOGG SAYS: I THINK this note is now irrelevant:
+There are many ways to structure your code here, but in many of them, you will find that you need to ``take the inverse'' of the same covariance matrix over and over again.
+You might be tempted to use \texttt{inv()} and then repeatedly re-use that inverse tensor, but see \noteref{note:solve}, where we said that you should always use \texttt{solve()} instead.
 If you need to do multiple \texttt{solve()} operations with the same matrix, perform a Cholesky factorization, save the factorization, and then use \texttt{cho\_solve()}.
 That's just as fast as the dumber solution, and way more numerically stable.
+\end{note}
 
-\problem{What if we can mitigate granulation?}
-foo and bar
+\begin{problem}[realistically finding planets among other planets]\label{prob:planetsempirical}
+In \probref{prob:planets}, I asked information-theoretic questions about the noise coming from other planets in the system.
+Now let's perform the empirical study.
 
-\problem{Putting it all together}
-foo and bar.
+HOGG: Write problem about simulating data with finite, detectable planets and then searching for planets in that data.
+\end{problem}
+
+\begin{problem}[what if we can mitigate granulation?]
+HOGG: Write this problem.
+\end{problem}
+
+\begin{problem}[putting it all together]
+HOGG: Write this problem.
+\end{problem}
 
 \end{document}
