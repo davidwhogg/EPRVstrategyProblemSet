@@ -120,7 +120,10 @@ Later in \probref{prob:nuisances} we will look at what happens when you are infe
 \begin{note}
 Equation \eqref{eq:sine} is written in terms of linear amplitudes $a, b$ but the question is about the total amplitude $\kappa$, which is a nonlinear (quadrature sum) of these.
 In order to transform the $2\times 2$ information tensor from the $a, b$ space to the $\kappa$ space, you will have to use the derivative vector $\dd\kappa/\dd(a,b)$.
-Think about the units of the information tensor and this derivative vector to make sure your expression is good.
+After that, what you will find is that you have to take some kind of expectation value over phase.
+That is, at different phases, there are different relationships between $\kappa$ and the linear amplitudes $a, b$.
+But, if you average over all phases (all phases are equally likely), the expectation value of $a^2$ is the same as the expectation value of $b^2$ and both of these are $\kappa^2/2$.
+That, plus the point that the expectation value of $a\,b$ vanishes, will convert your $2\times 2$ information tensor for $a$ and $b$ into your $1\times 1$ information for $\kappa$.
 \end{note}
 
 \begin{note}
@@ -281,6 +284,7 @@ When two observations are positively correlated, there is no way to combine them
 that is $\sqrt{2}$ better than each individual measurement.
 Thus you don't get twice as much information when you spend twice as much time.
 
+HOGG: ADJUST this paragraph:
 Model a reasonable granulation and super-granulation noise source with two aperiodic simple harmonic oscillator (SHO) kernels with $\sigma_G$ = 0.329 m/s, $\tau_G$ = 0.31 days, and $\sigma_{SG}$ = 0.725 m/s , $\tau_{SG}$ = 1.05 days. Now repeat all of the calculations of \probref{prob:visibility} but including this term in the covariance matrix.
 That is ignore (for now) p-modes, but include realistic white noise (individual-exposure unbeatable uncertainty) plus the granulation and super-granulation noise contributions.
 Do the visibility-and-weather-censored observing plans still fare similarly, or do plans C and D take the lead for any values of $k$?
@@ -318,7 +322,15 @@ Compare your results to what you get when you fit \emph{only} planet $2$ and don
 \end{problem}
 
 \begin{note}
-I conjecture that the effects will be largest when either $P_1$ approaches $P_2$ or else when both periods get comparable to the total time of the full observing campaign.
+There are two approaches here.
+One looks like $I=I_{22} - I_{21}\,I_{11}^{-1}\,I_{21}$.
+The other looks like inverting the $4\times 4$ information tensor, taking a sub-matrix, and inverting back.
+These two approaches should give the same answer;
+bonus points for establishing that.
+\end{note}
+
+\begin{note}
+I conjecture that the effect (the increased variance from the other planet) will be largest when either $P_1$ approaches $P_2$ or else when both periods get comparable to the total time of the full observing campaign.
 \end{note}
 
 \begin{problem}[forest of planets]\label{prob:planets}
