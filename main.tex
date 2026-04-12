@@ -1,3 +1,8 @@
+% to-do
+% -----
+% - finish all problems (search for HOGG)
+% - make bibliography and tweak it into shape
+
 \documentclass{article}
 
 % page layout
@@ -38,7 +43,7 @@
 \begin{document}
 \section*{Observing strategy problem set}
 \noindent
-\textit{by} \textbf{David W. Hogg}\footnote{The author is very grateful for input from Niamh O'Sullivan (Oxford), Ryan Rubenzahl (CCA), and Megan Bedell (CCA).}
+\textit{by} \textbf{David W. Hogg}\footnote{The author is very grateful for input from Niamh O'Sullivan (Oxford), Ryan Rubenzahl (Flatiron), and Megan Bedell (Flatiron).}
 
 \paragraph{Introduction:}
 The current baseline observing plan (or cadence or strategy) for \textsl{Terra Hunting}
@@ -182,7 +187,7 @@ more importantly, are there exoplanet periods that become harder to detect?
 \end{problem}
 
 \begin{problem}[confirm Chaplin \textsl{et al.}]\label{prob:chaplin}
-The Chaplin \textsl{et al.} paper shows plots of the RV uncertainty in a single exposure of time $T$,
+The Chaplin \textsl{et al.} paper \cite{chaplin} shows plots of the RV uncertainty in a single exposure of time $T$,
 given two sources of noise.
 The first source is white noise, which is an unbeatable limit on our precision.
 The second is noise from surface velocities of p modes (asteroseismic modes).
@@ -365,8 +370,21 @@ Now let's perform the empirical study.
 HOGG: Write problem about simulating data with finite, detectable planets and then searching for planets in that data.
 \end{problem}
 
-\begin{problem}[what if we can mitigate granulation?]
-HOGG: Write this problem.
+\begin{problem}[Is mitigation better than noise modeling?]
+In the above, we have assumed that the noise from p-modes, granulation, super-granulation, and rotation are all just described by a Gaussian process with no other structure.
+However, all of these noise sources are also almost certainly associated with spectral changes \cite{hamratio}.
+That is, there might be spectral indicators of the RV offsets induced by these ``noise'' sources.
+Or, in other words, the RV measurements might be ``correctable'' by the use of certain spectral indicators.
+
+Construct fake data (on your favorite realistic set of time stamps) in which there is a supergranulation noise but, in addition to offsetting the RV data $y_i$, at each epoch there is a noisy supergranulation indicator $z_i$ that is a noisy realization of the supergranulation input to the RV.
+In order to do this construction, the supergranulation noise must be generated separately from the RVs and then ``observed'' directly with the indicator $z_i$ (which also gets white noise added).
+Develop a ``signal-to-noise'' statistic for how well the indicator $z$ can be used to ``de-trend'' the RV data.
+This should be related to a (square root of a) ratio of the variance of the noise on the indicator $z$ to the variance of the supergranulation.
+
+Use information theory to compute how how much the sensitivity to planets of relevant periods increases or decreases as you increase and decrease both the variance of the supergranulation noise and the signal-to-noise ratio of the supergranulation indicator.
+Technically, this will look like inferring both the RV signal and the supergranulation signal, using both the RV measurements $y_i$ and the supergranulation indicator data $z_i$.
+Do mitigation approaches have promise for our projects?
+What are the implications for project design and early science investigations?
 \end{problem}
 
 \begin{problem}[putting it all together]
