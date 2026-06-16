@@ -1,6 +1,8 @@
 % to-do
 % -----
 % - finish all problems (search for HOGG)
+% - audit: Make sure every problem asks for a definite deliverable or deliverables.
+% - add a problem (or maybe just a declarative statement) about what it is, very precisely, that we are trying to measure?
 % - make bibliography and tweak it into shape
 
 \documentclass{article}
@@ -43,33 +45,35 @@
 \begin{document}
 \section*{Observing strategy problem set}
 \noindent
-\textit{by} \textbf{David W. Hogg}\footnote{The author is very grateful for input from Niamh O'Sullivan (Oxford), Ryan Rubenzahl (Flatiron), and Megan Bedell (Flatiron).}
+\textit{Draft document 2026-06-16}\\
+\textit{by} \textbf{David W. Hogg}\footnote{The author is very grateful for input from Megan Bedell (Flatiron), Niamh O'Sullivan (Oxford), and Ryan Rubenzahl (Flatiron).}
 
 \paragraph{Introduction:}
 The current baseline observing plan (or cadence or strategy) for \textsl{Terra Hunting}
-is that we will observe each star for one exposure each night.
+is that we will observe each star for one exposure each night it's available.
 There has been discussion of the exposure time, and a bit of push back on the every-star-once-every-night plan, but it remains the baseline.
 I (Hogg) am convinced that observing each star once per night cannot be the correct strategy, for several reasons:
 \begin{itemize}
 \item
 The every-star-once-every-night strategy is \emph{just made up}, not based on the optimization or quantitative comparison of possible strategies.
 \item
-The strategy fills out the final data set with many pairs of observations separated by integer multiples of the sidereal period, but very few pairs of observations that sample shorter intervals, and especially not intervals near 1/2, 3/2, 5/2, 7/2, \textsl{etc.} of sidereal.
+The strategy fills out the final data set with many pairs of observations separated by integer multiples of the sidereal period, but very few pairs of observations that sample shorter intervals, and especially not intervals near 1/2, 3/2, 5/2, \textsl{etc.} of sidereal.
 That, in turn, probably reduces our sensitivity to short-period planets and noise sources with correlations on hours-to-days timescales.
 \item
 Our baseline takes one exposure per visit, adjusted to minimize p-mode contributions to the final uncertainty budget.
 It is almost always better to resolve and model nuisances than to hope that you can observe such that they don't matter.
-This is related to the question of whether to ``mitigate'' or ``avoid'' foregrounds in cosmological projects such as line-intensity mapping.
+This is related to the question of whether to ``mitigate'' or ``avoid'' foregrounds in cosmological projects such as line-intensity mapping;
+in the long run, mitigation rules.
 \end{itemize}
-This problem set is designed to find (and, we hope, solve) simple, quantitative, well-posed problems that are extremely adjacent to the hard, real-world, ill-posed observing strategy questions that we face in 2026 and over the subsequent decade.
+This problem set is designed to find (and, we hope, solve) simple, quantitative, well-posed problems that are extremely adjacent to the hard, real-world, ill-posed observing strategy questions that we face in the 2026--2036 period.
 
 It is Hogg's firmly held position that \emph{if} we can solve the problems in this problem set, then
 \begin{itemize}
 \item we will have content for more than one publishable paper in the refereed literature, and
-\item we will build a shared understanding of relevant concepts and language around them, and
+\item we will build a shared understanding of relevant concepts, and language around them, and
 \item we will have a good basis for making decisions about the \textsl{Terra Hunting} observing plan.
 \end{itemize}
-Just to be absolutely clear: I (Hogg) \emph{do not know the answers} to the problems posed below.
+Just to be absolutely clear: I (Hogg) \emph{do not know the answers} to most of the problems posed below.
 I am currently working with Rubenzahl on \probref{prob:negative}.
 But I don't think \emph{anyone} in the field of EPRV can answer all of the questions posed in this problem set, or at least not without some work.
 
@@ -82,8 +86,8 @@ Gather the following quantities or inputs or estimates thereof:
     \item the expected RV precision for a single, say, 300\,s exposure of a 6.5\,mag Sun-like star, under the outrageously unrealistic assumption that there will be no noise other than white (photon) noise (don't worry; we are going to build sophisticated noise models below);
     \item the longest exposure time any sensible person would let you integrate for on a 6.5\,mag Sun-like star, before insisting that you split the exposure into two sub-exposures;
     \item the expected read noise \emph{in units of exposure time} such that, for a 6.5\,mag Sun-like star, the read noise would deliver, in that exposure time, comparable uncertainty to the white (photon) noise;
-    \item what Chaplin \textsl{et al.} assumed about the power spectrum (or kernel, equivalently) of p-mode noise;
-    \item what the Aigrain group assumes about granulation and super-granulation, expressed as a power spectrum or kernel; and
+    \item what Chaplin \textsl{et al.} \cite{chaplin} assumed about the power spectrum (or kernel, equivalently) of p-mode noise;
+    \item what the Aigrain group assumes about granulation and super-granulation, expressed as a parameterized power spectrum or kernel; and
     \item a month or so of real Solar RV measurements made by Rubenzahl with \textsl{Keck Planet Finder (KPF)}.
 \end{enumerate}
 We will need these pieces of information for the problems that follow.
@@ -94,11 +98,11 @@ There are many ways to detect or measure or characterize planets in radial-veloc
 That said, there are strict bounds on how well we can possibly do, coming from information theory.
 In particular, the Fisher information in a data set about the amplitude (say) of a signal with a certain period sets an absolute lower limit on the uncertainty that we can obtain by any unbiased method (see the Cram\'er--Rao bound).
 In detail, there are many ways to search for and identify and characterize signals.
-All these methods must deliver an uncertainty that is strictly not less than the uncertainty we compute by considering only the Fisher information on the amplitude of a sinusoidal signal at fixed period.
+All these methods (if unbiased) must deliver an uncertainty that is strictly not less than the uncertainty we compute by considering only the Fisher information on the amplitude of a sinusoidal signal at fixed period.
 
 That is, we could search in period, amplitude, eccentricity, and orbital orientation space, and we could simultaneously marginalize out all noise sources and all nuisances, and we cannot do \emph{better} than the uncertainty implied by the Fisher information on the amplitude of a sinusoid at fixed period.
 
-Now imagine that we have $n$ radial-velocity measurements $y_i$, taken at (exposure mid-point barycentric) times $t_i$, each of which as an uncertainty (assumed Gaussian and zero mean) $\sigma_i$.
+Now imagine that we have $n$ radial-velocity measurements $y_i$, taken at (exposure mid-point barycentric) times $t_i$, each of which has a known uncertainty (assumed Gaussian and zero mean) $\sigma_i$.
 What is the Fisher information on the amplitude $\kappa$ of a radial-velocity signal
 \begin{equation}
 y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t) ~,\label{eq:sine}
@@ -106,13 +110,13 @@ y(t) = a\,\cos(\omega\,t) + b\,\sin(\omega\,t) ~,\label{eq:sine}
 where the angular frequency $\omega$ is related to the period $P$ by $\omega = 2\pi/P$,
 and the amplitude $\kappa$ is related to the linear amplitudes $a,b$ by $\kappa^2=a^2+b^2$.
 
-In order to solve this problem, start by assuming that all of the observations are uncorrelated; that is, assume that the covariance matrix for the list of measurements $y_i$ is diagonal.
+In order to solve this \problemname{}, start by assuming that all of the observations are uncorrelated; that is, assume that the covariance matrix for the list of measurements $y_i$ is diagonal.
 Then, what is the same answer for covariant measurements, and how do you parameterize that?
 
 Choose a set of times for two cases:
 In unrealistic case A the times are periodic at the sidereal period for $n=3650$ daily observations.
 In unrealistic case B the $n=3650$ times are randomly chosen in a 10-year interval.
-Plot the (optimistic, minimal, best-case) uncertainty on $\kappa$ as a function of period $T$.
+Plot the (optimistic, minimal, best-case) uncertainty on $\kappa$ as a function of period $P$.
 You will have to choose some uncertainty or uncertainty distribution for your measurements; choose to match your best-case expectations for \textsl{Terra Hunting}.
 More sophisticated noise models will be developed below.
 \end{problem}
@@ -137,12 +141,12 @@ Ignore it; if you can't measure the $e=0$ sinusoidal signal \eqref{eq:sine}, the
 Recall that we are obtaining a lower bound on any possible uncertainty.
 \end{note}
 
-\begin{problem}[once per night]\label{prob:k}
+\begin{problem}[multiple observations per night]\label{prob:k}
 Imagine that there are a fixed number of available hours available over the next 3650 nights, and imagine (incorrectly) that there is magically guaranteed availability for a particular magical target every single night.
 Imagine (incorrectly) that every observation $i$ we make of this target gives us a measurement of the radial velocity $y_i$ of exactly the same uncertainty $\sigma_i=\sigma_0$, and that these uncertainties are well represented by zero-mean Gaussians of variance $\sigma_i^2$.
 Most importantly, assume (incorrectly) that the observational uncertainties are all perfectly \emph{uncorrelated}:
 Every observation's noise draw is independent from every other observation's.
-That is, in this problem, we are assuming that the star has \emph{no non-trivial noise properties} and that the instrumentation is stable.
+That is, in this \problemname{}, we are assuming that the star has \emph{no non-trivial noise properties} and that the instrumentation is stable.
 
 Now consider three possible programs:
 \begin{itemize}
@@ -151,7 +155,7 @@ In program A, the target is observed once per night.
 \item
 In program B, the target is observed a random number of times per night, where that number is drawn from a Poisson process with mean rate of unity.
 \item
-In program C, the target is observed $k$ times in a night, once every $k$ nights. Consider only small values of $k$, like $k\leq 6$.
+In program C, the target is observed $k$ times in a night, once every $k$ nights. Consider only a small value of $k$, like $k\sim 5$.
 \item
 In program D, nights are chosen iid as ``observing nights'' with probability $1/k$.
 On each chosen observing night, the target is observed $k$ times; on the not-chosen nights the target is not observed.
@@ -164,7 +168,7 @@ We are happy if you simply assume that in the nights in programs B, C, and D wit
 \end{problem}
 
 \begin{note}
-This problem is extremely simplified but it will show (we think) that all four programs are equally sensitive (in a Fisher-information sense) to planets with orbital periods substantially longer than a few days.
+This \problemname{} is extremely simplified but it will show (we think) that all four programs are equally sensitive (in a Fisher-information sense) to planets with orbital periods substantially longer than a few days.
 It will also show (we think) that short-period signals are less detectable in program C than in programs A, B, and D,
 but that otherwise programs A, B, and D will all be identical for the detection of all planets.
 Note that this is in part because we are assuming uncorrelated noise (we'll update that assumption below).
@@ -191,20 +195,21 @@ The Chaplin \textsl{et al.} paper \cite{chaplin} shows plots of the RV uncertain
 given two sources of noise.
 The first source is white noise, which is an unbeatable limit on our precision.
 The second is noise from surface velocities of p modes (asteroseismic modes).
-The paper starts with a power specrum for the noise and ends up with RV uncertainties.
+The paper \cite{chaplin} starts with a power specrum for the noise and ends up with RV uncertainties.
 Write code to do what Chaplin did, and reproduce their key figures.
 Note that the Chaplin estimates are (extremely optimistic) Fisher information estimates, just like the ones we made in \probref{prob:info}.
 
-When you execute this problem, you might be doing integrals over frequency of power spectra (and then taking square roots).
-If you execute the problem this way, make sure you do those integrals sensibly.
+When you execute this \problemname{}, you might be doing integrals over frequency of power spectra (and then taking square roots).
+If you execute this way, make sure you do those integrals sensibly.
 One important issue: Should your integral include a point at \emph{zero frequency}?
 That's a nasty thing: It corresponds to a random DC offset across the full data set.
 Does that exist?
-Our advice is to do any integrals you can analytically, analytically.
+Our advice is to do any integrals you can do analytically, analytically.
 The white-noise component of the variance has straightforward analytic results.
 
 Once that all works, and you can reproduce the Chaplin \textsl{et al.} results, figure out how to do a slightly different calculation:
-Use the same Chaplin assumptions as you used in the first part of this problem, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T)$ with exposure time $T_2$.
+Use the same Chaplin assumptions as you used in the first part of this \problemname{}, but use them to compute the \emph{covariance} between two data points, one starting at time $t_1$ with exposure time $T_1$, and the other starting at $t_2>(t_1 + T_1)$ with exposure time $T_2$.
+Find a way to display your results visually, as a function of $T_1$, $T_2$, and the gap $\Delta=(t_2 - t_1 - T_1)$.
 \end{problem}
 
 \begin{problem}[negatively correlated noise in a multi-exposre visit]\label{prob:negative}
@@ -212,11 +217,11 @@ The noise from p-mode oscillations is very different from white noise or red noi
 When you have a \emph{negative} noise correlation between two adjacent exposures, you can do \emph{better} than $\sqrt{2}$ when you combine them, just as, when you have a \emph{positive} correlation between two adjacent exposures, you do \emph{worse} than $\sqrt{2}$ when you combine them (because they share aspects of the noise).
 
 In \probref{prob:chaplin}, you figured out how to compute variances and covariances for observations and pairs of observations, given both p-mode and white noise contributions.
-Now imagine that you have $N$ observations, all of length $T$, with dead-time intervals (read times) $\Delta$ between them.
+Now imagine that you have $N$ observations, all of exposure time $T$, with dead-time intervals (read times) $\Delta$ between them.
 For this observing sequence, you can construct the $N\times N$ variance tensor you expect to represent the combined p-mode and white noise in this $N$-exposure sequence, treated as one ``visit.''
 
 We want to consider the situation in which the observation is modeled as a multivariate ($N$-dimensional) Gaussian draw from a Gaussian with a mean $N$-vector and a $N\times N$ variance tensor.
-For this problem we will imagine that the star has, over the visit, a fixed mean velocity $\mu$ (which is what we are trying to measure).
+For this \problemname{} we will imagine that the star has, over the visit, a fixed mean velocity $\mu$ (which is what we are trying to measure).
 Thus the mean $N$-vector is treated as just being the mean $\mu$ repeated $N$ times.
 The variance tensor is built as just described.
 
@@ -352,7 +357,7 @@ What do I mean here?
 The planets are close to orthogonal in the space of the data when the design matrix $X$ for the $k$ planets at $k$ different periods produces a parameter information tensor $X^\top\,C^{-1}\,X$ (HOGG WE NEED TO DEFINE THINGS EARLIER) that is close to block-diagonal with $k$ blocks, one per planet.
 In general the planets approach orthogonality as the data set gets long, but there are issues if we do something stupid like observe with a precisely periodic cadence, which can generate resonances and aliases.
 
-HOGG: Write this problem.
+HOGG: Write this \problemname{}.
 \end{problem}
 
 \begin{note}
@@ -370,7 +375,7 @@ Now let's perform the empirical study.
 HOGG: Write problem about simulating data with finite, detectable planets and then searching for planets in that data.
 \end{problem}
 
-\begin{problem}[Is mitigation better than noise modeling?]
+\begin{problem}[value of mitigation]
 In the above, we have assumed that the noise from p-modes, granulation, super-granulation, and rotation are all just described by a Gaussian process with no other structure.
 However, all of these noise sources are also almost certainly associated with spectral changes \cite{hamratio}.
 That is, there might be spectral indicators of the RV offsets induced by these ``noise'' sources.
@@ -386,6 +391,14 @@ Technically, this will look like inferring both the RV signal and the supergranu
 Do mitigation approaches have promise for our projects?
 What are the implications for project design and early science investigations?
 \end{problem}
+
+\begin{note}
+Sometimes there is an implicit idea in the EPRV community that if you have a good model for the noise---and in this case that usually means good kernel parameters for a Gaussian process---that the noise is ``handled.''
+This \problemname{} should show that this is not the case:
+Mitigation is far more effective than a noise model.
+A good noise model gives you good and believable \emph{uncertainty estimates} on your planets, but it doesn't increase your sensitivity to planets.
+If you want to increase sensitivity, you must mitigate, using external indicators, where by ``external'' we mean somehow independent of the RV measurements themselves.
+\end{note}
 
 \begin{problem}[putting it all together]
 HOGG: Write this problem.
